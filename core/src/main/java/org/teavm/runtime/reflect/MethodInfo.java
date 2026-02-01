@@ -1,5 +1,5 @@
 /*
- *  Copyright 2025 Alexey Andreev.
+ *  Copyright 2026 Alexey Andreev.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,8 +13,22 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.teavm.classlib.java.lang.reflect;
+package org.teavm.runtime.reflect;
 
-abstract class TLazyResolvedType implements TType {
-    abstract void resolve(TGenericDeclaration declaration);
+import org.teavm.runtime.StringInfo;
+
+public final class MethodInfo {
+    public native StringInfo name();
+
+    public native int modifiers();
+
+    public native ClassInfo returnType();
+
+    public native int parameterCount();
+
+    public native ClassInfo parameterType(int index);
+    
+    public native MethodCaller caller();
+    
+    public native MethodReflectionInfo reflection();
 }

@@ -74,7 +74,7 @@ let $rt_createDoubleArrayFromData = data => {
 }
 
 let $rt_arraycls = cls => {
-    let result = cls.$array;
+    let result = cls[$rt_meta].arrayType;
     if (result === null) {
         function JavaArray(data) {
             $rt_objcls().call(this);
@@ -106,24 +106,16 @@ let $rt_arraycls = cls => {
             }
             return new ($rt_arraycls(this.type))(dataCopy);
         };
-        let name = "[" + cls.$meta.binaryName;
-        JavaArray.$meta = {
-            item: cls,
-            supertypes: [$rt_objcls()],
-            primitive: false,
-            superclass: $rt_objcls(),
+        let name = "[" + cls[$rt_meta].binaryName;
+        JavaArray[$rt_meta] = $rt_newClassMetadata({
             name: name,
             binaryName: name,
-            enum: false,
-            simpleName: null,
-            declaringClass: null,
-            enclosingClass: null
-        };
-        JavaArray.classObject = null;
-        JavaArray.$array = null;
+            parent: $rt_objcls(),
+            itemType: cls
+        });
 
         result = JavaArray;
-        cls.$array = JavaArray;
+        cls[$rt_meta].arrayType = JavaArray;
     }
     return result;
 }
@@ -283,4 +275,51 @@ let $rt_concatArrays = (a, b) => {
         b = teavm_globals.Array.from(b);
     }
     return a.concat(b);
+}
+let $rt_arrayGet = (type, array, index) => {
+    let item = array.data[index];
+    if (teavm_javaMethodExists("java.lang.Boolean", "valueOf(Z)Ljava/lang/Boolean;") && type === $rt_booleancls) {
+        return teavm_javaMethod("java.lang.Boolean", "valueOf(Z)Ljava/lang/Boolean;")(item);
+    } else if (teavm_javaMethodExists("java.lang.Byte", "valueOf(B)Ljava/lang/Byte;") && type === $rt_bytecls) {
+        return teavm_javaMethod("java.lang.Byte", "valueOf(B)Ljava/lang/Byte;")(item);
+    } else if (teavm_javaMethodExists("java.lang.Short", "valueOf(S)Ljava/lang/Short;") && type === $rt_shortcls) {
+        return teavm_javaMethod("java.lang.Short", "valueOf(S)Ljava/lang/Short;")(item);
+    } else if (teavm_javaMethodExists("java.lang.Character", "valueOf(C)Ljava/lang/Character;")
+        && type === $rt_charcls) {
+        return teavm_javaMethod("java.lang.Character", "valueOf(C)Ljava/lang/Character;")(item);
+    } else if (teavm_javaMethodExists("java.lang.Integer", "valueOf(I)Ljava/lang/Integer;") && type === $rt_intcls) {
+        return teavm_javaMethod("java.lang.Integer", "valueOf(I)Ljava/lang/Integer;")(item);
+    } else if (teavm_javaMethodExists("java.lang.Long", "valueOf(J)Ljava/lang/Long;") && type === $rt_longcls) {
+        return teavm_javaMethod("java.lang.Long", "valueOf(J)Ljava/lang/Long;")(item);
+    } else if (teavm_javaMethodExists("java.lang.Float", "valueOf(F)Ljava/lang/Float;") && type === $rt_floatcls) {
+        return teavm_javaMethod("java.lang.Float", "valueOf(F)Ljava/lang/Float;")(item);
+    } else if (teavm_javaMethodExists("java.lang.Double", "valueOf(D)Ljava/lang/Double;") && type === $rt_doublecls) {
+        return teavm_javaMethod("java.lang.Double", "valueOf(D)Ljava/lang/Double;")(item);
+    } else {
+        return item;
+    }
+}
+let $rt_arrayPut = (type, array, index, value) => {
+    if (teavm_javaMethodExists("java.lang.Boolean", "booleanValue()Z") && type === $rt_booleancls) {
+        array.data[index] = teavm_javaMethod("java.lang.Boolean", "booleanValue()Z")(value);
+    } else if (teavm_javaMethodExists("java.lang.Byte", "byteValue()B") && type === $rt_booleancls) {
+        array.data[index] = teavm_javaMethod("java.lang.Byte", "byteValue()B")(value);
+    } else if (teavm_javaMethodExists("java.lang.Short", "shortValue()S") && type === $rt_shortcls) {
+        array.data[index] = teavm_javaMethod("java.lang.Short", "shortValue()S")(value);
+    } else if (teavm_javaMethodExists("java.lang.Character", "charValue()C") && type === $rt_charcls) {
+        array.data[index] = teavm_javaMethod("java.lang.Character", "charValue()C")(value);
+    } else if (teavm_javaMethodExists("java.lang.Integer", "intValue()I") && type === $rt_intcls) {
+        array.data[index] = teavm_javaMethod("java.lang.Integer", "intValue()I")(value);
+    } else if (teavm_javaMethodExists("java.lang.Long", "longValue()J") && type === $rt_longcls) {
+        array.data[index] = teavm_javaMethod("java.lang.Long", "longValue()J")(value);
+    } else if (teavm_javaMethodExists("java.lang.Float", "floatValue()F") && type === $rt_floatcls) {
+        array.data[index] = teavm_javaMethod("java.lang.Float", "floatValue()F")(value);
+    } else if (teavm_javaMethodExists("java.lang.Double", "doubleValue()D") && type === $rt_floatcls) {
+        array.data[index] = teavm_javaMethod("java.lang.Double", "doubleValue()D")(value);
+    } else {
+        array.data[index] = value;
+    }
+}
+function $rt_arrayLength(array) {
+    return array.data.length;
 }

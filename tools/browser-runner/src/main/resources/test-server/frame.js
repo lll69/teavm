@@ -114,7 +114,7 @@ function prepareJsLauncher() {
 }
 
 function buildErrorMessage(e) {
-    if (typeof $rt_decodeStack === "function" && typeof teavmException == "string") {
+    if (typeof $rt_decodeStack === "function" && typeof teavmException === "string") {
         return teavmException;
     }
     let stack = "";

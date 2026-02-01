@@ -107,7 +107,6 @@ public class PlatformPlugin implements TeaVMPlugin, MetadataRegistration {
                 host.add(new NewInstanceDependencySupport());
             }
             host.add(new ClassLookupDependencySupport());
-            host.add(new EnumDependencySupport());
             host.add(new PlatformDependencyListener());
 
             TeaVMPluginUtil.handleNatives(host, Platform.class);

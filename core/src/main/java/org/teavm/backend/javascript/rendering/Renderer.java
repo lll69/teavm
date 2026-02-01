@@ -68,6 +68,7 @@ import org.teavm.model.MethodReference;
 import org.teavm.model.ValueType;
 import org.teavm.model.analysis.ClassMetadataRequirements;
 import org.teavm.model.util.AsyncMethodFinder;
+import org.teavm.runtime.reflect.ModifiersInfo;
 import org.teavm.vm.RenderingException;
 import org.teavm.vm.TeaVMProgressFeedback;
 
@@ -99,8 +100,8 @@ public class Renderer implements RenderingManager {
 
     public static final MethodDescriptor CLINIT_METHOD = new MethodDescriptor("<clinit>", ValueType.VOID);
 
-    public Renderer(SourceWriter writer, Set<MethodReference> asyncMethods, RenderingContext context,
-            Diagnostics diagnostics, Map<MethodReference, Generator> generators,
+    public Renderer(SourceWriter writer, SourceWriter metadataWriter, Set<MethodReference> asyncMethods,
+            RenderingContext context, Diagnostics diagnostics, Map<MethodReference, Generator> generators,
             MethodNodeCache astCache, CacheStatus cacheStatus, JavaScriptTemplateFactory templateFactory,
             List<ExportedDeclaration> exports, String entryPoint) {
         this.writer = writer;
@@ -112,7 +113,7 @@ public class Renderer implements RenderingManager {
         this.context = context;
         variableNameGenerator = new VariableNameGenerator(context.isMinifying());
         methodBodyRenderer = new MethodBodyRenderer(context, diagnostics, context.isMinifying(), asyncMethods,
-                writer, variableNameGenerator);
+                writer, metadataWriter, variableNameGenerator);
         this.generators = generators;
         this.astCache = astCache;
         this.cacheStatus = cacheStatus;
@@ -206,6 +207,10 @@ public class Renderer implements RenderingManager {
             writer.append(";").softNewLine();
             writer.markSectionEnd();
         }
+    }
+
+    public void renderReflection() {
+
     }
 
     public void renderCompatibilityStubs() throws RenderingException {
@@ -532,17 +537,16 @@ public class Renderer implements RenderingManager {
             }
             writer.append("],").ws();
 
-            var flags = ElementModifier.pack(cls.readModifiers());
+            var modifiers = ElementModifier.asModifiersInfo(cls.readModifiers(), cls.getLevel());
             if (cls.hasModifier(ElementModifier.ANNOTATION)) {
                 var retention = cls.getAnnotations().get(Retention.class.getName());
                 if (retention != null && retention.getValue("value").getEnumValue().getFieldName().equals("RUNTIME")) {
                     if (cls.getAnnotations().get(Inherited.class.getName()) != null) {
-                        flags |= 32768;
+                        modifiers |= ModifiersInfo.INHERITED_ANNOTATION;
                     }
                 }
             }
-            writer.append(flags).append(',').ws();
-            writer.append(cls.getLevel().ordinal()).append(',').ws();
+            writer.append(modifiers).append(',').ws();
 
             if (!requiredMetadata.enclosingClass() && !requiredMetadata.declaringClass()
                     && !requiredMetadata.simpleName()) {

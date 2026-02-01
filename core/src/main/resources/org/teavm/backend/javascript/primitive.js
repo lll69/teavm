@@ -15,34 +15,22 @@
  */
 "use strict";
 
-let $rt_createcls = () => {
-    return {
-        $array : null,
-        classObject : null,
-        $meta: {
-            supertypes : [],
-            superclass : null
-        }
-    };
-}
-let $rt_createPrimitiveCls = (name, binaryName) => {
-    let cls = $rt_createcls();
-    cls.$meta.primitive = true;
-    cls.$meta.name = name;
-    cls.$meta.binaryName = binaryName;
-    cls.$meta.enum = false;
-    cls.$meta.item = null;
-    cls.$meta.simpleName = null;
-    cls.$meta.declaringClass = null;
-    cls.$meta.enclosingClass = null;
+let $rt_createPrimitiveCls = (name, binaryName, kind) => {
+    let cls = () => {};
+    cls[$rt_meta] = $rt_newClassMetadata({
+        name: name,
+        binaryName: binaryName,
+        modifiers: 1 | (1 << 4),
+        primitiveKind: kind
+    });
     return cls;
 }
-let $rt_booleancls = $rt_createPrimitiveCls("boolean", "Z");
-let $rt_charcls = $rt_createPrimitiveCls("char", "C");
-let $rt_bytecls = $rt_createPrimitiveCls("byte", "B");
-let $rt_shortcls = $rt_createPrimitiveCls("short", "S");
-let $rt_intcls = $rt_createPrimitiveCls("int", "I");
-let $rt_longcls = $rt_createPrimitiveCls("long", "J");
-let $rt_floatcls = $rt_createPrimitiveCls("float", "F");
-let $rt_doublecls = $rt_createPrimitiveCls("double", "D");
-let $rt_voidcls = $rt_createPrimitiveCls("void", "V");
+let $rt_booleancls = $rt_createPrimitiveCls("boolean", "Z", 1);
+let $rt_bytecls = $rt_createPrimitiveCls("byte", "B", 2);
+let $rt_shortcls = $rt_createPrimitiveCls("short", "S", 3);
+let $rt_charcls = $rt_createPrimitiveCls("char", "C", 4);
+let $rt_intcls = $rt_createPrimitiveCls("int", "I", 5);
+let $rt_longcls = $rt_createPrimitiveCls("long", "J", 6);
+let $rt_floatcls = $rt_createPrimitiveCls("float", "F", 7);
+let $rt_doublecls = $rt_createPrimitiveCls("double", "D", 8);
+let $rt_voidcls = $rt_createPrimitiveCls("void", "V", 9);

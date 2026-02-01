@@ -15,22 +15,16 @@
  */
 
 function getLength(array) {
-    if (array === null || array.constructor.$meta.item === 'undefined') {
+    if (array === null || typeof array.constructor[$rt_meta].itemType === 'undefined') {
         $rt_throw(teavm_javaConstructor("java.lang.IllegalArgumentException", "()V")());
     }
     return array.data.length;
 }
 
-function newInstanceImpl(type, length) {
-    if (type.$meta.primitive) {
-        teavm_fragment("primitiveArrays");
-    }
-    return $rt_createArray(type, length);
-}
 
 function getImpl(array, index) {
     var item = array.data[index];
-    var type = array.constructor.$meta.item;
+    var type = array.constructor[$rt_meta].itemType;
     if (teavm_javaMethodExists("java.lang.Boolean", "valueOf(Z)Ljava/lang/Boolean;") && type === $rt_booleancls) {
         return teavm_javaMethod("java.lang.Boolean", "valueOf(Z)Ljava/lang/Boolean;")(item);
     } else if (teavm_javaMethodExists("java.lang.Byte", "valueOf(B)Ljava/lang/Byte;") && type === $rt_bytecls) {
@@ -54,7 +48,7 @@ function getImpl(array, index) {
 }
 
 function setImpl(array, index, value) {
-    var type = array.constructor.$meta.item;
+    var type = array.constructor[$rt_meta].item;
     if (teavm_javaMethodExists("java.lang.Boolean", "booleanValue()Z") && type === $rt_booleancls) {
         array.data[index] = teavm_javaMethod("java.lang.Boolean", "booleanValue()Z")(value);
     } else if (teavm_javaMethodExists("java.lang.Byte", "byteValue()B") && type === $rt_booleancls) {

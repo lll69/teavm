@@ -1,5 +1,5 @@
 /*
- *  Copyright 2025 Alexey Andreev.
+ *  Copyright 2026 Alexey Andreev.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,17 +13,16 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.teavm.classlib.impl.reflection;
+package org.teavm.backend.javascript.intrinsics.reflection;
 
-import org.teavm.backend.javascript.spi.Injector;
-import org.teavm.backend.javascript.spi.InjectorContext;
+import org.teavm.backend.javascript.codegen.SourceWriter;
+import org.teavm.backend.javascript.spi.Generator;
+import org.teavm.backend.javascript.spi.GeneratorContext;
 import org.teavm.model.MethodReference;
 
-public class ObjectListGenerator implements Injector {
+public class ObjectGenerator implements Generator {
     @Override
-    public void generate(InjectorContext context, MethodReference methodRef) {
-        context.getWriter().appendFunction("$rt_wrapArray").append("(").appendClass("java.lang.Object").append(",");
-        context.writeExpr(context.getArgument(0));
-        context.getWriter().append(")");
+    public void generate(GeneratorContext context, SourceWriter writer, MethodReference methodRef) {
+        writer.append("return ").append(context.getParameterName(0)).append(".constructor;").softNewLine();
     }
 }

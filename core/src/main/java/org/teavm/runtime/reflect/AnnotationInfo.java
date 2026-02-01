@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 Alexey Andreev.
+ *  Copyright 2026 Alexey Andreev.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,21 +13,10 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.teavm.platform;
+package org.teavm.runtime.reflect;
 
-import org.teavm.interop.NoSideEffects;
-import org.teavm.interop.Unmanaged;
-import org.teavm.jso.JSObject;
-import org.teavm.jso.JSProperty;
+import java.lang.annotation.Annotation;
 
-public interface PlatformObject extends JSObject {
-    @JSProperty("$id$")
-    @Unmanaged
-    @NoSideEffects
-    int getId();
-
-    @JSProperty("$id$")
-    @Unmanaged
-    @NoSideEffects
-    void setId(int id);
+public class AnnotationInfo {
+    public native Annotation createObject();
 }

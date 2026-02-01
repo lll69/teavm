@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 Alexey Andreev.
+ *  Copyright 2026 Alexey Andreev.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,10 +13,8 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.teavm.platform;
+package org.teavm.runtime;
 
-import org.teavm.jso.JSObject;
-
-interface PlatformStringClass extends JSObject {
-    PlatformString fromCharCode(int charCode);
+public class StringInfo {
+    public native String getStringObject();
 }

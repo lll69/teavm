@@ -86,6 +86,7 @@ import org.teavm.vm.RenderingException;
 public class StatementRenderer implements ExprVisitor, StatementVisitor {
     private RenderingContext context;
     private SourceWriter writer;
+    private SourceWriter metadataWriter;
     private ClassReaderSource classSource;
     private boolean async;
     private boolean minifying;
@@ -101,10 +102,11 @@ public class StatementRenderer implements ExprVisitor, StatementVisitor {
     private final Deque<LocationStackEntry> locationStack = new ArrayDeque<>();
     private TextLocation lastEmittedLocation = TextLocation.EMPTY;
 
-    public StatementRenderer(RenderingContext context, SourceWriter writer,
+    public StatementRenderer(RenderingContext context, SourceWriter writer, SourceWriter metadataWriter,
             VariableNameGenerator variableNameGenerator) {
         this.context = context;
         this.writer = writer;
+        this.metadataWriter = metadataWriter;
         this.classSource = context.getClassSource();
         this.minifying = context.isMinifying();
         this.naming = context.getNaming();
@@ -1598,6 +1600,11 @@ public class StatementRenderer implements ExprVisitor, StatementVisitor {
         @Override
         public SourceWriter getWriter() {
             return writer;
+        }
+
+        @Override
+        public SourceWriter getMetadataWriter() {
+            return metadataWriter;
         }
 
         @Override

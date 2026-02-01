@@ -26,13 +26,19 @@ let $rt_packages = data => {
     }
     $rt_packageData = packages;
 }
+let $rt_allClasses = [];
+let $rt_allClassesPointer = 0;
+let $rt_allClassesRewind = () => $rt_allClassesPointer = 0;
+let $rt_allClassesHasNext = () => $rt_allClassesPointer < $rt_allClasses.length;
+let $rt_allClassesNext = () => $rt_allClasses[$rt_allClassesPointer++];
 let $rt_metadata = data => {
     let packages = $rt_packageData;
     let i = 0;
     while (i < data.length) {
         let cls = data[i++];
-        cls.$meta = {};
-        let m = cls.$meta;
+        $rt_allClasses.push(cls);
+        let m = $rt_newClassMetadata();
+        cls[$rt_meta] = m;
         let className = data[i++];
 
         m.name = className !== 0 ? className : null;
@@ -45,30 +51,19 @@ let $rt_metadata = data => {
 
         m.binaryName = "L" + m.name + ";";
         let superclass = data[i++];
-        m.superclass = superclass !== 0 ? superclass : null;
-        m.supertypes = data[i++];
-        if (m.superclass) {
-            m.supertypes.push(m.superclass);
-            cls.prototype = teavm_globals.Object.create(m.superclass.prototype);
+        m.parent = superclass !== 0 ? superclass : null;
+        m.superinterfaces = data[i++];
+        if (m.parent) {
+            cls.prototype = teavm_globals.Object.create(m.parent.prototype);
         } else {
             cls.prototype = {};
         }
-        let flags = data[i++];
-        m.enum = (flags & 8) !== 0;
-        m.flags = flags;
-        m.primitive = false;
-        m.item = null;
         cls.prototype.constructor = cls;
-        cls.classObject = null;
-
-        m.accessLevel = data[i++];
+        m.modifiers = data[i++];
+        m.primitiveKind = 0;
 
         let innerClassInfo = data[i++];
-        if (innerClassInfo === 0) {
-            m.simpleName = null;
-            m.declaringClass = null;
-            m.enclosingClass = null;
-        } else {
+        if (innerClassInfo !== 0) {
             let enclosingClass = innerClassInfo[0];
             m.enclosingClass = enclosingClass !== 0 ? enclosingClass : null;
             let declaringClass = innerClassInfo[1];
@@ -78,7 +73,9 @@ let $rt_metadata = data => {
         }
 
         let clinit = data[i++];
-        cls.$clinit = clinit !== 0 ? clinit : function() {};
+        m.clinit = clinit !== 0
+            ? () => { m.clinit = () => {}; clinit(); }
+            : () => {};
 
         let virtualMethods = data[i++];
         if (virtualMethods !== 0) {
@@ -93,7 +90,12 @@ let $rt_metadata = data => {
                 }
             }
         }
-
-        cls.$array = null;
     }
 }
+let $rt_enumConstantsMetadata = data => {
+    let i = 0;
+    while (i < data.length) {
+        let cls = data[i++];
+        cls[$rt_meta].enumConstants = data[i++];
+    }
+};

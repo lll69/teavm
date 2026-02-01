@@ -34,6 +34,8 @@ public interface InjectorContext extends ServiceRepository {
 
     SourceWriter getWriter();
 
+    SourceWriter getMetadataWriter();
+
     Properties getProperties();
 
     void writeEscaped(String str);

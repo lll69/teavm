@@ -16,6 +16,7 @@
 package org.teavm.model;
 
 import java.util.Set;
+import org.teavm.runtime.reflect.ModifiersInfo;
 
 /**
  * Represents flags for classes and class members.
@@ -53,5 +54,62 @@ public enum ElementModifier {
             bit <<= 1;
         }
         return value;
+    }
+
+    public static int asModifiersInfo(Set<ElementModifier> elementModifiers, AccessLevel level) {
+        var modifiers = 0;
+        switch (level) {
+            case PACKAGE_PRIVATE:
+                break;
+            case PRIVATE:
+                modifiers |= ModifiersInfo.PRIVATE;
+                break;
+            case PROTECTED:
+                modifiers |= ModifiersInfo.PROTECTED;
+                break;
+            case PUBLIC:
+                modifiers |= ModifiersInfo.PUBLIC;
+                break;
+        }
+        if (elementModifiers.contains(ElementModifier.STATIC)) {
+            modifiers |= ModifiersInfo.STATIC;
+        }
+        if (elementModifiers.contains(ElementModifier.FINAL)) {
+            modifiers |= ModifiersInfo.FINAL;
+        }
+        if (elementModifiers.contains(ElementModifier.SYNCHRONIZED)) {
+            modifiers |= ModifiersInfo.SYNCHRONIZED;
+        }
+        if (elementModifiers.contains(ElementModifier.VOLATILE)) {
+            modifiers |= ModifiersInfo.VOLATILE;
+        }
+        if (elementModifiers.contains(ElementModifier.TRANSIENT)) {
+            modifiers |= ModifiersInfo.TRANSIENT;
+        }
+        if (elementModifiers.contains(ElementModifier.NATIVE)) {
+            modifiers |= ModifiersInfo.NATIVE;
+        }
+        if (elementModifiers.contains(ElementModifier.INTERFACE)) {
+            modifiers |= ModifiersInfo.INTERFACE;
+        }
+        if (elementModifiers.contains(ElementModifier.ABSTRACT)) {
+            modifiers |= ModifiersInfo.ABSTRACT;
+        }
+        if (elementModifiers.contains(ElementModifier.STRICT)) {
+            modifiers |= ModifiersInfo.STRICT;
+        }
+        if (elementModifiers.contains(ElementModifier.VARARGS)) {
+            modifiers |= ModifiersInfo.VARARGS;
+        }
+        if (elementModifiers.contains(ElementModifier.ANNOTATION)) {
+            modifiers |= ModifiersInfo.ANNOTATION;
+        }
+        if (elementModifiers.contains(ElementModifier.SYNTHETIC)) {
+            modifiers |= ModifiersInfo.SYNTHETIC;
+        }
+        if (elementModifiers.contains(ElementModifier.ENUM)) {
+            modifiers |= ModifiersInfo.ENUM;
+        }
+        return modifiers;
     }
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 Alexey Andreev.
+ *  Copyright 2026 Alexey Andreev.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,14 +13,20 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.teavm.platform;
+package org.teavm.runtime.reflect;
 
-import org.teavm.jso.JSObject;
+public final class MethodReflectionInfo {
+    public native GenericTypeInfo genericReturnType();
 
-public interface PlatformString extends JSObject {
-    PlatformString toUpperCase();
+    public native int genericParameterTypeCount();
 
-    PlatformString toLowerCase();
+    public native GenericTypeInfo genericParameterType(int index);
 
-    int charCodeAt(int index);
+    public native int annotationCount();
+
+    public native AnnotationInfo annotation(int index);
+
+    public native int typeParameterCount();
+
+    public native TypeVariableInfo typeParameter(int index);
 }
