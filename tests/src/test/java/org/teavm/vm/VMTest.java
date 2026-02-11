@@ -49,7 +49,7 @@ public class VMTest {
     }
 
     @JSBody(params = "data", script = "return data instanceof Int8Array;")
-    private static native boolean isTypedArray(@JSByRef byte[] data);
+    private static native boolean isTypedArray(@JSByRef(optional = true) byte[] data);
 
     @Test
     public void multiArrayCreated() {
