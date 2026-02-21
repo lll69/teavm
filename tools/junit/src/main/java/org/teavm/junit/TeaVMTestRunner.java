@@ -64,7 +64,6 @@ import org.teavm.model.ReferenceCache;
 import org.teavm.model.ValueType;
 import org.teavm.parsing.ClasspathClassHolderSource;
 import org.teavm.parsing.ClasspathResourceProvider;
-import org.teavm.parsing.resource.ResourceProvider;
 import org.teavm.vm.TeaVM;
 import org.teavm.vm.TeaVMTarget;
 
@@ -95,7 +94,6 @@ public class TeaVMTestRunner extends Runner implements Filterable {
     private List<TestRun> runsInCurrentClass = new ArrayList<>();
     private static List<TestPlatformSupport<?>> platforms = new ArrayList<>();
     private List<TestPlatformSupport<?>> participatingPlatforms = new ArrayList<>();
-    private ResourceProvider resourceProvider;
 
     static {
         classLoader = TeaVMTestRunner.class.getClassLoader();
@@ -158,9 +156,7 @@ public class TeaVMTestRunner extends Runner implements Filterable {
         }
 
         List<Method> children = getFilteredChildren();
-        var description = getDescription();
 
-        notifier.fireTestStarted(description);
         isWholeClassCompilation = !testClass.isAnnotationPresent(EachTestCompiledSeparately.class);
         if (isWholeClassCompilation) {
             runWithWholeClassCompilation(children, notifier);
@@ -172,8 +168,6 @@ public class TeaVMTestRunner extends Runner implements Filterable {
 
         writeRunsDescriptor();
         runsInCurrentClass.clear();
-
-        notifier.fireTestFinished(description);
     }
 
     private void runWithWholeClassCompilation(List<Method> children, RunNotifier notifier) {
@@ -187,11 +181,11 @@ public class TeaVMTestRunner extends Runner implements Filterable {
 
         for (var child : children) {
             var description = describeChild(child);
-            notifier.fireTestStarted(description);
 
             if (isIgnored(child)) {
                 notifier.fireTestIgnored(description);
             } else {
+                notifier.fireTestStarted(description);
                 var success = true;
                 if (skipJvmForClass && !child.isAnnotationPresent(SkipJVM.class)) {
                     ClassHolder classHolder = classSource.get(child.getDeclaringClass().getName());
@@ -214,9 +208,8 @@ public class TeaVMTestRunner extends Runner implements Filterable {
                         }
                     }
                 }
+                notifier.fireTestFinished(description);
             }
-
-            notifier.fireTestFinished(description);
         }
 
         for (var testsForPlatform : tests) {
@@ -286,11 +279,9 @@ public class TeaVMTestRunner extends Runner implements Filterable {
     }
 
     private List<PlatformClassTests> compileWholeClass(List<Method> children, RunNotifier notifier) {
-        var description = getDescription();
-
         var result = new ArrayList<PlatformClassTests>();
         for (var platformSupport : participatingPlatforms) {
-            var item = compileClassForPlatform(platformSupport, children, testClass, description, notifier);
+            var item = compileClassForPlatform(platformSupport, children, testClass, getDescription(), notifier);
             if (item == null) {
                 return null;
             }
@@ -374,13 +365,12 @@ public class TeaVMTestRunner extends Runner implements Filterable {
 
     private void runChild(Method child, RunNotifier notifier) {
         Description description = describeChild(child);
-        notifier.fireTestStarted(description);
 
         if (isIgnored(child)) {
             notifier.fireTestIgnored(description);
-            notifier.fireTestFinished(description);
             return;
         }
+        notifier.fireTestStarted(description);
 
         boolean ran = false;
         boolean success = true;
