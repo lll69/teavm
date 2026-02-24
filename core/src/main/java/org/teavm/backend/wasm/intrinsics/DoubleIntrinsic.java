@@ -113,6 +113,7 @@ public class DoubleIntrinsic implements WasmIntrinsic {
         return block;
     }
 
+    // TODO: Make isInfinite(NaN) return false on WASM and C
     private WasmExpression testIsInfinite(WasmExpression expression) {
         var conversion = new WasmConversion(WasmNumType.FLOAT64, WasmNumType.INT64, false, expression);
         conversion.setReinterpret(true);

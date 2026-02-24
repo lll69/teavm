@@ -73,6 +73,7 @@ public class FloatIntrinsic implements WasmGCIntrinsic {
         return block;
     }
 
+    // TODO: Make isInfinite(NaN) return false on WASM and C
     private WasmExpression testIsInfinite(WasmExpression expression) {
         var conversion = new WasmConversion(WasmNumType.FLOAT32, WasmNumType.INT32, false, expression);
         conversion.setReinterpret(true);

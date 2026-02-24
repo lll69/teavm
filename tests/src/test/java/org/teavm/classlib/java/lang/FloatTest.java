@@ -16,12 +16,15 @@
 package org.teavm.classlib.java.lang;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.teavm.junit.SkipPlatform;
 import org.teavm.junit.TeaVMTestRunner;
+import org.teavm.junit.TestPlatform;
 
 @RunWith(TeaVMTestRunner.class)
 public class FloatTest {
@@ -60,6 +63,15 @@ public class FloatTest {
         assertEquals(23, Float.parseFloat("23F"), 0.1f);
         assertEquals(23, Float.parseFloat("23d"), 0.1f);
         assertEquals(23, Float.parseFloat("23D"), 0.1f);
+
+        assertEquals(Float.POSITIVE_INFINITY, Float.parseFloat("Infinity"), 1E-12F);
+        assertEquals(Float.POSITIVE_INFINITY, Float.parseFloat("+Infinity"), 1E-12F);
+        assertEquals(Float.NEGATIVE_INFINITY, Float.parseFloat("-Infinity"), 1E-12F);
+        assertEquals(Float.NEGATIVE_INFINITY, Float.parseFloat(" -Infinity "), 1E-12F);
+        assertEquals(Float.NaN, Float.parseFloat("NaN"), 1E-12F);
+        assertEquals(Float.NaN, Float.parseFloat("+NaN"), 1E-12F);
+        assertEquals(Float.NaN, Float.parseFloat("-NaN"), 1E-12F);
+        assertEquals(Float.NaN, Float.parseFloat(" -NaN "), 1E-12F);
     }
 
     @Test
@@ -82,6 +94,23 @@ public class FloatTest {
         checkIllegalFormat(".");
         checkIllegalFormat("1e-");
         checkIllegalFormat("1e");
+
+        checkIllegalFormat("++Infinity");
+        checkIllegalFormat("--Infinity");
+        checkIllegalFormat("INFINITY");
+        checkIllegalFormat("infinity");
+        checkIllegalFormat("InfinityF");
+        checkIllegalFormat("InfinityD");
+        checkIllegalFormat("Infinityf");
+        checkIllegalFormat("Infinityd");
+        checkIllegalFormat("++NaN");
+        checkIllegalFormat("--NaN");
+        checkIllegalFormat("NAN");
+        checkIllegalFormat("nan");
+        checkIllegalFormat("NaNF");
+        checkIllegalFormat("NaND");
+        checkIllegalFormat("NaNf");
+        checkIllegalFormat("NaNd");
     }
 
     private void checkIllegalFormat(String string) {
@@ -146,5 +175,19 @@ public class FloatTest {
         assertEquals(Float.valueOf(OTHER_NAN), Float.valueOf(OTHER_NAN));
         assertNotEquals(Float.floatToRawIntBits(OTHER_NAN), Float.floatToRawIntBits(Float.NaN));
         assertEquals(Float.floatToIntBits(OTHER_NAN), Float.floatToIntBits(Float.NaN));
+    }
+
+    @Test
+    @SkipPlatform({ TestPlatform.WASI, TestPlatform.WEBASSEMBLY, TestPlatform.WEBASSEMBLY_GC, TestPlatform.C })
+    // TODO: Make isInfinite(NaN) return false on WASM and C
+    public void testFinity() {
+        assertTrue(Float.isFinite(1f));
+        assertFalse(Float.isInfinite(1f));
+        assertFalse(Float.isFinite(Float.POSITIVE_INFINITY));
+        assertTrue(Float.isInfinite(Float.POSITIVE_INFINITY));
+        assertFalse(Float.isFinite(Float.NEGATIVE_INFINITY));
+        assertTrue(Float.isInfinite(Float.NEGATIVE_INFINITY));
+        assertFalse(Float.isFinite(Float.NaN));
+        assertFalse(Float.isInfinite(Float.NaN));
     }
 }
