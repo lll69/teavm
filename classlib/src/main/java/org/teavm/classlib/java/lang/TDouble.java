@@ -268,11 +268,9 @@ public class TDouble extends TNumber implements TComparable<TDouble> {
     @Unmanaged
     public static native boolean isNaN(double v);
 
-    @JSBody(params = "v", script = "return (!isFinite(v) && !isNaN(v));")
-    @Import(module = "teavm", name = "isinf")
-    @NoSideEffects
-    @Unmanaged
-    public static native boolean isInfinite(double v);
+    public static boolean isInfinite(double v) {
+        return (!isFinite(v) && !isNaN(v));
+    }
 
     @JSBody(params = "v", script = "return isFinite(v);")
     @Import(module = "teavm", name = "isfinite")

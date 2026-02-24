@@ -197,8 +197,6 @@ public class DoubleTest {
     }
 
     @Test
-    @SkipPlatform({ TestPlatform.WASI, TestPlatform.WEBASSEMBLY, TestPlatform.WEBASSEMBLY_GC, TestPlatform.C })
-    // TODO: Make isInfinite(NaN) return false on WASM and C
     public void testFinity() {
         assertTrue(Double.isFinite(1d));
         assertFalse(Double.isInfinite(1d));

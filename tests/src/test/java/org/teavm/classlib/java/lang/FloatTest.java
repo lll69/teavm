@@ -178,8 +178,6 @@ public class FloatTest {
     }
 
     @Test
-    @SkipPlatform({ TestPlatform.WASI, TestPlatform.WEBASSEMBLY, TestPlatform.WEBASSEMBLY_GC, TestPlatform.C })
-    // TODO: Make isInfinite(NaN) return false on WASM and C
     public void testFinity() {
         assertTrue(Float.isFinite(1f));
         assertFalse(Float.isInfinite(1f));
