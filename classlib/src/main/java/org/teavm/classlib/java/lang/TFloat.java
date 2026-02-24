@@ -109,7 +109,7 @@ public class TFloat extends TNumber implements TComparable<TFloat> {
     public static native boolean isNaN(float v);
 
     public static boolean isInfinite(float v) {
-        return (!isFinite(v) && !isNaN(v));
+        return !isFinite(v) && !isNaN(v);
     }
 
     @JSBody(params = "v", script = "return isFinite(v);")

@@ -269,7 +269,7 @@ public class TDouble extends TNumber implements TComparable<TDouble> {
     public static native boolean isNaN(double v);
 
     public static boolean isInfinite(double v) {
-        return (!isFinite(v) && !isNaN(v));
+        return !isFinite(v) && !isNaN(v);
     }
 
     @JSBody(params = "v", script = "return isFinite(v);")
